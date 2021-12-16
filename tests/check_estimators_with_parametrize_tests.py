@@ -140,5 +140,5 @@ def test_sklearn_compatible_wrapper(estimator, check):
 
 
 @parametrize_with_checks([DatetimeFeaturesTestClass()])
-def test_sklearn_datetime(estimator, check):
+def test_sklearn_compatible_datetime(estimator, check):
     check(estimator)
