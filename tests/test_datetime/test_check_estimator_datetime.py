@@ -1,7 +1,7 @@
 import pytest
 from sklearn.utils.estimator_checks import check_estimator
 
-from feature_engine.datetime.classes_to_test import DatetimeFeaturesTestClass
+from feature_engine.datetime.wrapper_classes_for_check_estimator import DatetimeFeaturesTestClass
 
 
 @pytest.mark.parametrize(
