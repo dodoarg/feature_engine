@@ -6,7 +6,9 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.impute import SimpleImputer
 from sklearn.utils.estimator_checks import parametrize_with_checks
 
-from feature_engine.datetime.wrapper_classes_for_check_estimator import DatetimeFeaturesTestClass
+from feature_engine.datetime.wrapper_classes_for_check_estimator import (
+    DatetimeFeaturesTestClass,
+)
 from feature_engine.encoding import (
     CountFrequencyEncoder,
     DecisionTreeEncoder,
