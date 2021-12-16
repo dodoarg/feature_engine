@@ -20,6 +20,7 @@ from feature_engine.datetime.datetime_constants import (
 )
 from feature_engine.variable_manipulation import (
     _check_input_parameter_variables,
+    _find_all_variables,
     _find_or_check_datetime_variables,
 )
 
@@ -131,7 +132,6 @@ class DatetimeFeatures(BaseEstimator, TransformerMixin):
         dayfirst: bool = False,
         yearfirst: bool = False,
         utc: Union[None, bool] = None,
-
     ) -> None:
 
         if features_to_extract:
@@ -163,10 +163,7 @@ class DatetimeFeatures(BaseEstimator, TransformerMixin):
             )
 
         if utc is not None and not isinstance(utc, bool):
-            raise ValueError(
-                "utc takes only booleans or None. "
-                f"Got {utc} instead."
-            )
+            raise ValueError("utc takes only booleans or None. " f"Got {utc} instead.")
 
         self.variables = _check_input_parameter_variables(variables)
         self.drop_original = drop_original
@@ -175,6 +172,7 @@ class DatetimeFeatures(BaseEstimator, TransformerMixin):
         self.yearfirst = yearfirst
         self.utc = utc
         self.features_to_extract = features_to_extract
+        self._ignore_format = False
 
     def fit(self, X: pd.DataFrame, y: Optional[pd.Series] = None):
         """
@@ -195,8 +193,12 @@ class DatetimeFeatures(BaseEstimator, TransformerMixin):
         # check input dataframe
         X = _is_dataframe(X)
 
-        # find or check for datetime variables
-        self.variables_ = _find_or_check_datetime_variables(X, self.variables)
+        if self._ignore_format is True:
+            # work around to test the class with check_estimator
+            self.variables_ = _find_all_variables(X, self.variables)
+        else:
+            # find or check for datetime variables
+            self.variables_ = _find_or_check_datetime_variables(X, self.variables)
 
         # check if datetime variables contains na
         if self.missing_values == "raise":
@@ -245,8 +247,10 @@ class DatetimeFeatures(BaseEstimator, TransformerMixin):
         datetime_df = pd.concat(
             [
                 pd.to_datetime(
-                    X[variable], dayfirst=self.dayfirst,
-                    yearfirst=self.yearfirst, utc=self.utc
+                    X[variable],
+                    dayfirst=self.dayfirst,
+                    yearfirst=self.yearfirst,
+                    utc=self.utc,
                 )
                 for variable in self.variables_
             ],
@@ -256,9 +260,9 @@ class DatetimeFeatures(BaseEstimator, TransformerMixin):
         non_dt_columns = datetime_df.columns[~datetime_df.apply(is_datetime)].tolist()
         if non_dt_columns:
             raise ValueError(
-                "ValueError: variable(s) " +
-                (len(non_dt_columns) * '{} ').format(*non_dt_columns) +
-                "could not be converted to datetime. Try setting utc=True"
+                "ValueError: variable(s) "
+                + (len(non_dt_columns) * "{} ").format(*non_dt_columns)
+                + "could not be converted to datetime. Try setting utc=True"
             )
 
         # create new features

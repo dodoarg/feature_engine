@@ -6,6 +6,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.impute import SimpleImputer
 from sklearn.utils.estimator_checks import parametrize_with_checks
 
+from feature_engine.datetime.classes_to_test import DatetimeFeaturesTestClass
 from feature_engine.encoding import (
     CountFrequencyEncoder,
     DecisionTreeEncoder,
@@ -135,4 +136,9 @@ def test_sklearn_compatible_selectors(estimator, check):
 
 @parametrize_with_checks([SklearnTransformerWrapper(SimpleImputer())])
 def test_sklearn_compatible_wrapper(estimator, check):
+    check(estimator)
+
+
+@parametrize_with_checks([DatetimeFeaturesTestClass()])
+def test_sklearn_datetime(estimator, check):
     check(estimator)
