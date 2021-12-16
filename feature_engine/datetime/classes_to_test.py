@@ -38,5 +38,5 @@ class DatetimeFeaturesTestClass(DatetimeFeatures):
         tags_dict["_xfail_checks"]["check_estimators_nan_inf"] = "transformer allows NA"
         tags_dict["_xfail_checks"][
             "check_no_attributes_set_in_init"
-        ] = "transformer allows NA"
+        ] = "transformer has an additional parameter set in the init"
         return tags_dict
