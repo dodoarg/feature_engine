@@ -238,7 +238,7 @@ def _find_or_check_datetime_variables(
         else:
             vars_non_dt = [
                 column
-                for column in variables
+                for column in X[variables].select_dtypes(exclude="datetime")
                 if is_numeric(X[column])
                 or not _is_categorical_and_is_datetime(X[column])
             ]
